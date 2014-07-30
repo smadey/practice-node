@@ -1,0 +1,128 @@
+<!doctype html>
+<html ng-app="todo">
+
+<head>
+    <meta charset="utf-8">
+    <title>AngularJS • TodoMVC</title>
+    <meta name="description" content="AngularJS, TodoMVC">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
+    <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/todo.css">
+    <style>
+    [ng-cloak] {
+        display: none;
+    }
+    </style>
+</head>
+
+<body>
+    <section id="todoapp" ng-controller="TodoCtrl">
+        <header id="header">
+            <h1>todos</h1>
+            <form id="todo-form" ng-submit="addTodo()">
+                <input id="new-todo" placeholder="What needs to be done?" ng-model="newTodoText">
+            </form>
+        </header>
+        <section id="main" ng-show="todos.length" ng-cloak>
+            <input id="toggle-all" type="checkbox" ng-model="allChecked" ng-change="doneAll(allChecked)">
+            <ul id="todo-list">
+                <li ng-repeat="todo in todos | filter: statusFilter track by $index" ng-class="{ completed: todo.done, editing: todo == editingTodo }">
+                    <div class="view">
+                        <input class="toggle" type="checkbox" ng-model="todo.done">
+                        <label ng-dblclick="selectTodo(todo)">{{todo.text}}</label>
+                        <button class="destroy" ng-click="removeTodo(todo)"></button>
+                    </div>
+                    <form ng-submit="saveTodo(todo)">
+                        <input class="edit" ng-model="todo.text" ng-blur="saveTodo(todo)" ng-keydown="editTodo(todo)">
+                    </form>
+                </li>
+            </ul>
+        </section>
+        <footer id="footer" ng-show="todos.length" ng-cloak>
+            <span id="todo-count">
+                <strong>{{remainingCount}}</strong> {{ remainingCount == 1 ? 'item' : 'items'}} left</span>
+            <ul id="filters">
+                <li>
+                    <a ng-class="{ selected: location.path() == '/' }" href="#/">All</a>
+                </li>
+                <li>
+                    <a ng-class="{ selected: location.path() == '/active' }" href="#/active">Active</a>
+                </li>
+                <li>
+                    <a ng-class="{ selected: location.path() == '/completed' }" href="#/completed">Completed</a>
+                </li>
+            </ul>
+            <button id="clear-completed" ng-show="doneCount" ng-click="clearDone()">Clear completed ({{doneCount}})</button>
+        </footer>
+    </section>
+    <footer id="info">
+        <p>Double-click to edit a todo</p>
+        <p ng-show="!isGuest" ng-cloak><a href="/logout">logout</a></p>
+    </footer>
+
+    <!-- Modal -->
+    <div id="loginModal" ng-controller="UserCtrl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel" ng-cloak>{{isLoginStatus ? 'Login' : 'Register'}}</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm" class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <div class="col-sm-offset-4 col-sm-8 text-danger" ng-show="message" ng-cloak>{{message}}</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="txtUsername" class="col-sm-4 control-label">Username</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="txtUsername" ng-model="username" placeholder="Username">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="txtPassword" class="col-sm-4 control-label">Password</label>
+                            <div class="col-sm-6">
+                                <input type="password" class="form-control" id="txtPassword" ng-model="password" placeholder="Password">
+                            </div>
+                        </div>
+                        <div id="passwordRow" class="form-group" ng-hide="isLoginStatus">
+                            <label for="txtPassword2" class="col-sm-4 control-label">Confirm Password</label>
+                            <div class="col-sm-6">
+                                <input type="password" class="form-control" id="txtPassword2" ng-model="password2" placeholder="Confirm Password">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-4 col-sm-8">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="remember">Remember me
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-4 col-sm-6">
+                                <button type="button" class="btn" ng-class="isLoginStatus ? 'btn-default' : 'btn-link'" ng-click="login()">Sign in</button>
+                                <button type="button" class="btn" ng-class="isLoginStatus ? 'btn-link' : 'btn-default'" ng-click="register()">Register</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div> -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    <script src="/lib/jquery/jquery.min.js"></script>
+    <script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/lib/angular/angular.min.js"></script>
+    <script src="/js/todo.js"></script>
+</body>
+
+</html>
